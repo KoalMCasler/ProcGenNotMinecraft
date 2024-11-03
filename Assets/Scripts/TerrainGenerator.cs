@@ -12,7 +12,6 @@ public class TerrainGernerator : MonoBehaviour
     public Cell cellObj;
     public Tile[] backupTiles;
     private int iteration;
-    [Range(0.000005f,0.0025f)]
     public float frequency;
     private void Awake()
     {

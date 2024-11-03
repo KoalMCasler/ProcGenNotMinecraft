@@ -943,6 +943,7 @@ MonoBehaviour:
   - {fileID: -400486917055780431, guid: da5f3021b0e9deb4f923bd7fd38ccec4, type: 3}
   - {fileID: 8322225453839143378, guid: 7334df603df904341830896d12125545, type: 3}
   - {fileID: -1588625916354989702, guid: 206cf12f6bb10074fa525ec3a3935036, type: 3}
+  frequency: 0.0005
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -6,22 +6,21 @@ using System.Linq;
 
 public class TerrainGernerator : MonoBehaviour
 {
-    [Range(5,15)]
+    [Range(5,20)]
     public int dimensions;
     public Tile[] tileObjects;
     public List<Cell> gridComponents;
     public Cell cellObj;
-
-    public Tile backupTile;
-
+    public Tile[] backupTiles;
     private int iteration;
-
     private void Awake()
     {
         gridComponents = new List<Cell>();
         InitializeGrid();
     }
-
+    /// <summary>
+    /// Builds starting grid based on dimensions
+    /// </summary>
     void InitializeGrid()
     {
         for(int y = 0; y < dimensions; y++)
@@ -37,6 +36,10 @@ public class TerrainGernerator : MonoBehaviour
         StartCoroutine(CheckEntropy());
     }
 
+    /// <summary>
+    /// Used to orginaize the list so the next tile to check is always the one with the lowest variatons posable. 
+    /// </summary>
+    /// <returns></returns>
     IEnumerator CheckEntropy()
     {
         List<Cell> tempGrid = new List<Cell>(gridComponents);
@@ -48,7 +51,10 @@ public class TerrainGernerator : MonoBehaviour
 
         CollapseCell(tempGrid);
     }
-
+    /// <summary>
+    /// Puts tile into cell position
+    /// </summary>
+    /// <param name="tempGrid"></param>
     void CollapseCell(List<Cell> tempGrid)
     {
         int randIndex = UnityEngine.Random.Range(0, tempGrid.Count);
@@ -63,19 +69,21 @@ public class TerrainGernerator : MonoBehaviour
         }
         catch
         {
-            Tile selectedTile = backupTile;
+            Tile selectedTile = backupTiles[UnityEngine.Random.Range(0,backupTiles.Count())];
             cellToCollapse.tileOptions = new Tile[] { selectedTile };
         }
 
         Tile foundTile = cellToCollapse.tileOptions[0];
         if(foundTile != null)
         {
-            Instantiate(foundTile, cellToCollapse.transform.position, foundTile.transform.rotation);
+            Instantiate(foundTile, cellToCollapse.transform.position, foundTile.transform.rotation,tempGrid[randIndex].transform);
         }
 
         UpdateGeneration();
     }
-
+    /// <summary>
+    /// Updates what tile is in each cell, calls validation.
+    /// </summary>
     void UpdateGeneration()
     {
         List<Cell> newGenerationCell = new List<Cell>(gridComponents);
@@ -105,8 +113,12 @@ public class TerrainGernerator : MonoBehaviour
 
                         foreach(Tile possibleOptions in up.tileOptions)
                         {
-                            var validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
-                            var valid = tileObjects[validOption].downNeighbours;
+                            int validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
+                            if(validOption < 0)
+                            {
+                                validOption = 0;
+                            }
+                            Tile[] valid = tileObjects[validOption].downNeighbours;
 
                             validOptions = validOptions.Concat(valid).ToList();
                         }
@@ -121,9 +133,12 @@ public class TerrainGernerator : MonoBehaviour
 
                         foreach(Tile possibleOptions in left.tileOptions)
                         {
-                            var validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
-                            var valid = tileObjects[validOption].rightNeighbours;
-
+                            int validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
+                            if(validOption < 0)
+                            {
+                                validOption = 0;
+                            }
+                            Tile[] valid = tileObjects[validOption].rightNeighbours;
                             validOptions = validOptions.Concat(valid).ToList();
                         }
 
@@ -137,8 +152,12 @@ public class TerrainGernerator : MonoBehaviour
 
                         foreach (Tile possibleOptions in down.tileOptions)
                         {
-                            var validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
-                            var valid = tileObjects[validOption].upNeighbours;
+                            int validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
+                            if(validOption < 0)
+                            {
+                                validOption = 0;
+                            }
+                            Tile[] valid = tileObjects[validOption].upNeighbours;
 
                             validOptions = validOptions.Concat(valid).ToList();
                         }
@@ -153,8 +172,12 @@ public class TerrainGernerator : MonoBehaviour
 
                         foreach (Tile possibleOptions in right.tileOptions)
                         {
-                            var validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
-                            var valid = tileObjects[validOption].leftNeighbours;
+                            int validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
+                            if(validOption < 0)
+                            {
+                                validOption = 0;
+                            }
+                            Tile[] valid = tileObjects[validOption].leftNeighbours;
 
                             validOptions = validOptions.Concat(valid).ToList();
                         }
@@ -164,7 +187,8 @@ public class TerrainGernerator : MonoBehaviour
 
                     Tile[] newTileList = new Tile[options.Count];
 
-                    for(int i = 0; i < options.Count; i++) {
+                    for(int i = 0; i < options.Count; i++)
+                    {
                         newTileList[i] = options[i];
                     }
 
@@ -181,7 +205,11 @@ public class TerrainGernerator : MonoBehaviour
             StartCoroutine(CheckEntropy());
         }
     }
-
+    /// <summary>
+    /// Makes sure tile is valid to place
+    /// </summary>
+    /// <param name="optionList"></param>
+    /// <param name="validOption"></param>
     void CheckValidity(List<Tile> optionList, List<Tile> validOption)
     {
         for(int x = optionList.Count - 1; x >=0; x--)

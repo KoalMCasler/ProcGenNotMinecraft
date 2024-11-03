@@ -875,7 +875,7 @@ GameObject:
   - component: {fileID: 1963842759}
   - component: {fileID: 1963842760}
   m_Layer: 0
-  m_Name: TerrainGenerator
+  m_Name: CityGenerator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

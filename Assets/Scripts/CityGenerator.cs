@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 
-public class TerrainGernerator : MonoBehaviour
+public class CityGernerator : MonoBehaviour
 {
     public int dimensions = 20;
     public Tile[] tileObjects;

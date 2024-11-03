@@ -6,13 +6,14 @@ using System.Linq;
 
 public class TerrainGernerator : MonoBehaviour
 {
-    [Range(5,20)]
-    public int dimensions;
+    public int dimensions = 20;
     public Tile[] tileObjects;
     public List<Cell> gridComponents;
     public Cell cellObj;
     public Tile[] backupTiles;
     private int iteration;
+    [Range(0.000005f,0.0025f)]
+    public float frequency;
     private void Awake()
     {
         gridComponents = new List<Cell>();
@@ -47,7 +48,7 @@ public class TerrainGernerator : MonoBehaviour
         tempGrid.Sort((a, b) => a.tileOptions.Length - b.tileOptions.Length);
         tempGrid.RemoveAll(a => a.tileOptions.Length != tempGrid[0].tileOptions.Length);
 
-        yield return new WaitForSeconds(0.025f);
+        yield return new WaitForSeconds(frequency);
 
         CollapseCell(tempGrid);
     }
@@ -69,15 +70,12 @@ public class TerrainGernerator : MonoBehaviour
         }
         catch
         {
-            Tile selectedTile = backupTiles[UnityEngine.Random.Range(0,backupTiles.Count())];
+            Tile selectedTile = backupTiles[UnityEngine.Random.Range(0, backupTiles.Length)];
             cellToCollapse.tileOptions = new Tile[] { selectedTile };
         }
 
         Tile foundTile = cellToCollapse.tileOptions[0];
-        if(foundTile != null)
-        {
-            Instantiate(foundTile, cellToCollapse.transform.position, foundTile.transform.rotation,tempGrid[randIndex].transform);
-        }
+        Instantiate(foundTile, cellToCollapse.transform.position, foundTile.transform.rotation,tempGrid[randIndex].transform);
 
         UpdateGeneration();
     }
@@ -114,13 +112,11 @@ public class TerrainGernerator : MonoBehaviour
                         foreach(Tile possibleOptions in up.tileOptions)
                         {
                             int validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
-                            if(validOption < 0)
+                            if(validOption >= 0)
                             {
-                                validOption = 0;
+                                Tile[] valid = tileObjects[validOption].downNeighbours;
+                                validOptions = validOptions.Concat(valid).ToList();    
                             }
-                            Tile[] valid = tileObjects[validOption].downNeighbours;
-
-                            validOptions = validOptions.Concat(valid).ToList();
                         }
 
                         CheckValidity(options, validOptions);
@@ -134,12 +130,11 @@ public class TerrainGernerator : MonoBehaviour
                         foreach(Tile possibleOptions in left.tileOptions)
                         {
                             int validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
-                            if(validOption < 0)
+                            if(validOption >= 0)
                             {
-                                validOption = 0;
+                                Tile[] valid = tileObjects[validOption].rightNeighbours;
+                                validOptions = validOptions.Concat(valid).ToList();   
                             }
-                            Tile[] valid = tileObjects[validOption].rightNeighbours;
-                            validOptions = validOptions.Concat(valid).ToList();
                         }
 
                         CheckValidity(options, validOptions);
@@ -153,13 +148,11 @@ public class TerrainGernerator : MonoBehaviour
                         foreach (Tile possibleOptions in down.tileOptions)
                         {
                             int validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
-                            if(validOption < 0)
+                            if(validOption >= 0)
                             {
-                                validOption = 0;
+                                Tile[] valid = tileObjects[validOption].upNeighbours;
+                                validOptions = validOptions.Concat(valid).ToList();
                             }
-                            Tile[] valid = tileObjects[validOption].upNeighbours;
-
-                            validOptions = validOptions.Concat(valid).ToList();
                         }
 
                         CheckValidity(options, validOptions);
@@ -173,13 +166,11 @@ public class TerrainGernerator : MonoBehaviour
                         foreach (Tile possibleOptions in right.tileOptions)
                         {
                             int validOption = Array.FindIndex(tileObjects, obj => obj == possibleOptions);
-                            if(validOption < 0)
+                            if(validOption >= 0)
                             {
-                                validOption = 0;
+                                Tile[] valid = tileObjects[validOption].leftNeighbours;
+                                validOptions = validOptions.Concat(valid).ToList();
                             }
-                            Tile[] valid = tileObjects[validOption].leftNeighbours;
-
-                            validOptions = validOptions.Concat(valid).ToList();
                         }
 
                         CheckValidity(options, validOptions);

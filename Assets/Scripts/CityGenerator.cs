@@ -11,6 +11,7 @@ public class CityGernerator : MonoBehaviour
     public List<Cell> gridComponents;
     public Cell cellObj;
     public Tile[] backupTiles;
+    private List<Cell> tempGrid;
     private int iteration;
     public float frequency;
     private void Awake()
@@ -42,7 +43,7 @@ public class CityGernerator : MonoBehaviour
     /// <returns></returns>
     IEnumerator CheckEntropy()
     {
-        List<Cell> tempGrid = new List<Cell>(gridComponents);
+        tempGrid = new List<Cell>(gridComponents);
         tempGrid.RemoveAll(c => c.collapsed);
         tempGrid.Sort((a, b) => a.tileOptions.Length - b.tileOptions.Length);
         tempGrid.RemoveAll(a => a.tileOptions.Length != tempGrid[0].tileOptions.Length);
@@ -89,7 +90,7 @@ public class CityGernerator : MonoBehaviour
         {
             for(int x = 0; x < dimensions; x++)
             {
-                var index = x + y * dimensions;
+                int index = x + y * dimensions;
 
                 if (gridComponents[index].collapsed)
                 {
@@ -116,6 +117,11 @@ public class CityGernerator : MonoBehaviour
                                 Tile[] valid = tileObjects[validOption].downNeighbours;
                                 validOptions = validOptions.Concat(valid).ToList();    
                             }
+                            else
+                            {
+                                CollapseCell(tempGrid);
+                                return;
+                            }
                         }
 
                         CheckValidity(options, validOptions);
@@ -133,6 +139,11 @@ public class CityGernerator : MonoBehaviour
                             {
                                 Tile[] valid = tileObjects[validOption].rightNeighbours;
                                 validOptions = validOptions.Concat(valid).ToList();   
+                            }
+                            else
+                            {
+                                CollapseCell(tempGrid);
+                                return;
                             }
                         }
 
@@ -152,6 +163,11 @@ public class CityGernerator : MonoBehaviour
                                 Tile[] valid = tileObjects[validOption].upNeighbours;
                                 validOptions = validOptions.Concat(valid).ToList();
                             }
+                            else
+                            {
+                                CollapseCell(tempGrid);
+                                return;
+                            }
                         }
 
                         CheckValidity(options, validOptions);
@@ -169,6 +185,11 @@ public class CityGernerator : MonoBehaviour
                             {
                                 Tile[] valid = tileObjects[validOption].leftNeighbours;
                                 validOptions = validOptions.Concat(valid).ToList();
+                            }
+                            else
+                            {
+                                CollapseCell(tempGrid);
+                                return;
                             }
                         }
 
@@ -204,7 +225,7 @@ public class CityGernerator : MonoBehaviour
     {
         for(int x = optionList.Count - 1; x >=0; x--)
         {
-            var element = optionList[x];
+            Tile element = optionList[x];
             if (!validOption.Contains(element))
             {
                 optionList.RemoveAt(x);

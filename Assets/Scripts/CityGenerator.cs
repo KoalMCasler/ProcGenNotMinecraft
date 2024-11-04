@@ -117,11 +117,6 @@ public class CityGernerator : MonoBehaviour
                                 Tile[] valid = tileObjects[validOption].downNeighbours;
                                 validOptions = validOptions.Concat(valid).ToList();    
                             }
-                            else
-                            {
-                                CollapseCell(tempGrid);
-                                return;
-                            }
                         }
 
                         CheckValidity(options, validOptions);
@@ -139,11 +134,6 @@ public class CityGernerator : MonoBehaviour
                             {
                                 Tile[] valid = tileObjects[validOption].rightNeighbours;
                                 validOptions = validOptions.Concat(valid).ToList();   
-                            }
-                            else
-                            {
-                                CollapseCell(tempGrid);
-                                return;
                             }
                         }
 
@@ -163,11 +153,7 @@ public class CityGernerator : MonoBehaviour
                                 Tile[] valid = tileObjects[validOption].upNeighbours;
                                 validOptions = validOptions.Concat(valid).ToList();
                             }
-                            else
-                            {
-                                CollapseCell(tempGrid);
-                                return;
-                            }
+
                         }
 
                         CheckValidity(options, validOptions);
@@ -186,11 +172,7 @@ public class CityGernerator : MonoBehaviour
                                 Tile[] valid = tileObjects[validOption].leftNeighbours;
                                 validOptions = validOptions.Concat(valid).ToList();
                             }
-                            else
-                            {
-                                CollapseCell(tempGrid);
-                                return;
-                            }
+
                         }
 
                         CheckValidity(options, validOptions);

@@ -212,6 +212,10 @@ public class CityGernerator : MonoBehaviour
             {
                 optionList.RemoveAt(x);
             }
+            else
+            {
+                optionList[0] = backupTiles[UnityEngine.Random.Range(0, backupTiles.Length)];
+            }
         }
     }
 }

@@ -208,7 +208,7 @@ public class CityGernerator : MonoBehaviour
         for(int x = optionList.Count - 1; x >=0; x--)
         {
             Tile element = optionList[x];
-            if (!validOption.Contains(element))
+            if (!validOption.Contains(element) && x >= 1)
             {
                 optionList.RemoveAt(x);
             }
